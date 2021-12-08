@@ -16,3 +16,13 @@ simply run
 ```
 conda env create -f environment.yml
 ```
+
+# adding my environment to jupyter
+## install the ipykernel
+```
+ conda install -c anaconda ipykernel
+ ```
+ ## add the environment to jupyter
+ ```
+ python -m ipykernel install --user --name data-test --display-name="Python (ENVIRONMENTNAME)"
+```
