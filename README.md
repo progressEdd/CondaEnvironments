@@ -24,6 +24,11 @@ simply run
 ```
 conda env create -f environment.yml
 ```
+# Importing my environment with a different name
+simply run and replace `otherName` with the new desired name
+```
+conda env create --name otherName -f environment.yml
+```
 
 # adding my environment to jupyter
 ## install the ipykernel
