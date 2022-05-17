@@ -44,7 +44,9 @@ conda env create --name otherName -f environment.yml
 ```
 
 ## add the environment to jupyter
+simply run and replace `otherName` with the new desired name
+replace `Python (ENVIRONMENTNAME)` with the name you wish to see in jupyter
 
 ```
-python -m ipykernel install --user --name data-test --display-name="Python (ENVIRONMENTNAME)"
+python -m ipykernel install --user --name `otherName` --display-name="Python (ENVIRONMENTNAME)"
 ```
