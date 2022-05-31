@@ -118,6 +118,8 @@ sudo apt-get update
 I had a issue where jupyterlab tabnine couldn't download pretrained models, but somehow my laptop was able to pull pip and conda packages. I got my friend YiFei to help me figure out my issue. Turns out I had the correct certificate file, but it wasn't named properly
 
 ## steps for how we debugged it
+
+### error outputs
 This was the error that kept showing up every time I launched Jupyterlab. I have pasted it here in case somone is searching this same issue
 ```
 [I 2022-04-07 11:15:26.174 ServerApp] jupyterlab_spellchecker extension was successfully loaded. 
@@ -184,6 +186,7 @@ install dir: /home/progressedd/miniconda3/lib/python3.9/site-packages/jupyterlab
 
 The main error to focus on is the `socket.gaierror: [Errno -3] Temporary failure in name resolution` and `urllib.error.URLError: <urlopen error [Errno -3] Temporary failure in name resolution>`, which indicates the issue is in the ssl certificates.
 
+### checking tabnine's script
 He had me first check the directory that had the initialization file was erroring out in 
 
 ```
@@ -194,7 +197,7 @@ nano tabnine.py
 
 We found the url that tabnine was trying to access as, `https://update.tabnine.com/bundles/`, but it wasn't accessible by browser or terminal, so we used `https://update.tabnine.com/bundles/version`
 
-
+#### using curl to access the url
 Throwing that into curl, we got the following
 
 ```
@@ -213,6 +216,7 @@ CAfile: /usr/local/share/ca-certificates/ZscalerRootCA.pem
 CApath: /etc/ssl/certs
 ```
 
+#### checking certificate configuration
 At that point, he realized there was an issue with the certificate locations. After a quick `history | grep cat` I found my fish config from my history
 ```
 cat ~/.config/fish/config.fish (base)
@@ -222,10 +226,13 @@ export REQUESTS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt # ca-bundle.crt
 # export REQUESTS_CA_BUNDLE=/usr/local/share/ca-certificates/ZscalerRootCA.pem
 ```
 
+#### chaning the filename
 So he had me move it to rename it using 
 ```
 sudo mv ZscalerRootCertificate.pem ZscalerRootCA.pem
 ```
+
+#### checking if the applied change worked
 then we tried using curl to see if the terminal could connect to the update domain
 ```
 curl -vv https://update.tabnine.com/bundles/version (base)
