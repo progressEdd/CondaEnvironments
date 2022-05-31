@@ -219,7 +219,9 @@ export SSL_CERT_FILE=/usr/local/share/ca-certificates/ZscalerRootCA.pem
 export REQUESTS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt # ca-bundle.crt
 # export REQUESTS_CA_BUNDLE=/usr/local/share/ca-certificates/ZscalerRootCA.pem```
 So he had me move it to rename it using 
-```sudo mv ZscalerRootCertificate.pem ZscalerRootCA.pem```
+```
+sudo mv ZscalerRootCertificate.pem ZscalerRootCA.pem
+```
 then we tried using curl to see if the terminal could connect to the update domain
 
 ```
@@ -273,5 +275,6 @@ CApath: /etc/ssl/certs
 < Age: 59164
 <
 * Connection #0 to host update.tabnine.com left intact
-4.4.12⏎
+4.4.12
+
 ```
