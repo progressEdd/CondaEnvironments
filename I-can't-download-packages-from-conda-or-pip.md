@@ -197,7 +197,8 @@ We found the url that tabnine was trying to access as, `https://update.tabnine.c
 
 Throwing that into curl, we got the following
 
-```curl -vv https://update.tabnine.com/bundles/version (base)
+```
+curl -vv https://update.tabnine.com/bundles/version (base)
 * Trying 108.156.120.14:443...
 * TCP_NODELAY set
 * Connected to update.tabnine.com (108.156.120.14) port 443 (#0)
@@ -211,19 +212,21 @@ curl: (77) error setting certificate verify locations:
 CAfile: /usr/local/share/ca-certificates/ZscalerRootCA.pem
 CApath: /etc/ssl/certs
 ```
+
 At that point, he realized there was an issue with the certificate locations. After a quick `history | grep cat` I found my fish config from my history
 ```
 cat ~/.config/fish/config.fish (base)
 export CURL_CA_BUNDLE=/usr/local/share/ca-certificates/ZscalerRootCA.pem
 export SSL_CERT_FILE=/usr/local/share/ca-certificates/ZscalerRootCA.pem
 export REQUESTS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt # ca-bundle.crt
-# export REQUESTS_CA_BUNDLE=/usr/local/share/ca-certificates/ZscalerRootCA.pem```
+# export REQUESTS_CA_BUNDLE=/usr/local/share/ca-certificates/ZscalerRootCA.pem
+```
+
 So he had me move it to rename it using 
 ```
 sudo mv ZscalerRootCertificate.pem ZscalerRootCA.pem
 ```
 then we tried using curl to see if the terminal could connect to the update domain
-
 ```
 curl -vv https://update.tabnine.com/bundles/version (base)
 * Trying 108.156.120.83:443...
