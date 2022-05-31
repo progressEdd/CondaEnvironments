@@ -281,3 +281,4 @@ CApath: /etc/ssl/certs
 4.4.12
 
 ```
+Success! Changing the filename to match the fish config solved the requests error.
