@@ -15,25 +15,49 @@ conda env export > environment.yml
 ```
 
 # prepare build dependencies such as gcc
+
 On ubuntu
 suggested by : https://stackoverflow.com/a/60340115/16150356
 it worked on my
-``` 
+
+```
 sudo apt-get install build-essential 
 ```
 
-# Importing my environment
+# Importing my (linux) environment
 
 simply run 
 
 ```
 conda env create -f environment.yml
 ```
-# Importing my environment with a different name
+
+## Importing my environment with a different name
+
 simply run and replace `otherName` with the new desired name
+
 ```
 conda env create --name otherName -f environment.yml
 ```
+
+# Importing my (cross-platform) environment
+
+simply run the following commands
+
+## Conda
+
+```
+conda env create -f cross-environment.yml
+```
+
+## pip
+
+```
+conda activate data
+python -m pip install -r requirements.txt
+```
+
+
 
 # adding my environment to jupyter
 
@@ -44,6 +68,7 @@ conda env create --name otherName -f environment.yml
 ```
 
 ## add the environment to jupyter
+
 * simply run and replace `otherName` with the new desired name
 * replace `Python (ENVIRONMENTNAME)` with the name you wish to see in jupyter
 

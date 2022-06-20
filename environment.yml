@@ -246,7 +246,7 @@ dependencies:
     - nbconvert==6.4.5
     - networkx==2.7.1
     - nltk==3.7
-    - notebook==6.4.10
+    - notebook==6.4.4
     - notebook-shim==0.1.0
     - ordered-set==4.1.0
     - pandas==1.4.1
