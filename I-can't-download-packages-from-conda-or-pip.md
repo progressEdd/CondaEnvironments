@@ -101,6 +101,12 @@ sudo apt-get update
    sudo cp ZscalerRootCA.pem /etc/ssl/certs
    ```
 
+4. update your certificates
+
+   ```
+   sudo update-ca-certificates
+   ```
+
 4. add it to your path/environment variables. Make sure the certificate filename matches the ones below
    
    ```
