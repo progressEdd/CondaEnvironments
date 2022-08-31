@@ -37,7 +37,7 @@ generateResolvConf = false
 wsl --shutdown
 ```
 
-~~### 4. copy your IPV4 addresses of your Ethernet 2 6 IPv4 {X.X.X.X, Y.Y.Y.Y} from powershell~~~
+~~### 4. copy your IPV4 addresses of your Ethernet 2 6 IPv4 {X.X.X.X, Y.Y.Y.Y} from powershell~~
 
 ```
  Get-DnsClientServerAddress
