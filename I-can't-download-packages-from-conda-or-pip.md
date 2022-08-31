@@ -25,6 +25,11 @@ run the following command
 sudo rm /etc/resolv.conf
 ```
 
+### 2. backup your conf
+```
+sudo cp /etc/resolv.conf /etc/resolv.conf.bk
+```
+
 ### 2. edit /etc/wsl.conf
 
 add the following lines
