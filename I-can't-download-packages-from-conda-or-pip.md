@@ -52,6 +52,11 @@ nameserver 1.1.1.1
 nameserver 8.8.8.8
 ```
 
+### 6. apply name changes with chmod
+```
+sudo chmod 444 /etc/resolv.conf
+```
+
 ### 6. shutdown wsl in powershell (to edit the settings)
 
 ```
