@@ -10,6 +10,9 @@ WSL does some funky stuff in the background and does apparently does not mirror 
 
 When WSL is first setup, it will default to nameservers that don't let you connect to the internet (very boneheaded indeed). To resolve this you will need to go to powershell and execute the following commands. The source is this guide here [WSL2, problem with netowrk connection when VPN used, mvrabel commented on Nov 24, 2021](https://github.com/microsoft/WSL/issues/5068#issuecomment-977826249)
 
+Here's some other helpful links
+* [Medium guide](https://medium.com/@aujlanavi0991/windows-subsystem-for-linux-wsl2-override-dns-configuration-ae4207b1a7f7)
+
 If you don't need it for corporate vpn, just run through steps 1,2,3,5. Also I wrote this guide it was kinda fuzzy but I'm pretty sure 1-3, 5 was what I did.
 
 You will need to use a powershell with elevated privalleges for the next set of steps
