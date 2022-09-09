@@ -308,3 +308,77 @@ CApath: /etc/ssl/certs
 
 ```
 Success! Changing the filename to match the fish config solved the requests error.
+
+# How Yifei helped me fix my requests error
+## background
+At somepoint, I was trying to use requests for another project, but the kept getting certificate issues
+```
+Traceback (most recent call last):
+  File "/home/progressedd/miniconda3/lib/python3.9/site-packages/urllib3/connectionpool.py", line 703, in urlopen
+    httplib_response = self._make_request(
+  File "/home/progressedd/miniconda3/lib/python3.9/site-packages/urllib3/connectionpool.py", line 386, in _make_request
+    self._validate_conn(conn)
+  File "/home/progressedd/miniconda3/lib/python3.9/site-packages/urllib3/connectionpool.py", line 1040, in _validate_conn
+    conn.connect()
+  File "/home/progressedd/miniconda3/lib/python3.9/site-packages/urllib3/connection.py", line 414, in connect
+    self.sock = ssl_wrap_socket(
+  File "/home/progressedd/miniconda3/lib/python3.9/site-packages/urllib3/util/ssl_.py", line 449, in ssl_wrap_socket
+    ssl_sock = _ssl_wrap_socket_impl(
+  File "/home/progressedd/miniconda3/lib/python3.9/site-packages/urllib3/util/ssl_.py", line 493, in _ssl_wrap_socket_impl
+    return ssl_context.wrap_socket(sock, server_hostname=server_hostname)
+  File "/home/progressedd/miniconda3/lib/python3.9/ssl.py", line 500, in wrap_socket
+    return self.sslsocket_class._create(
+  File "/home/progressedd/miniconda3/lib/python3.9/ssl.py", line 1040, in _create
+    self.do_handshake()
+  File "/home/progressedd/miniconda3/lib/python3.9/ssl.py", line 1309, in do_handshake
+    self._sslobj.do_handshake()
+ssl.SSLCertVerificationError: [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1129)
+During handling of the above exception, another exception occurred:
+Traceback (most recent call last):
+  File "/home/progressedd/miniconda3/lib/python3.9/site-packages/requests/adapters.py", line 489, in send
+    resp = conn.urlopen(
+  File "/home/progressedd/miniconda3/lib/python3.9/site-packages/urllib3/connectionpool.py", line 785, in urlopen
+    retries = retries.increment(
+  File "/home/progressedd/miniconda3/lib/python3.9/site-packages/urllib3/util/retry.py", line 592, in increment
+    raise MaxRetryError(_pool, url, error or ResponseError(cause))
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='www.glassdoor.com', port=443): Max retries exceeded with url: /profile/login_input.htm (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1129)')))
+```
+I tried changing my requests certificate bundle from
+```
+export REQUESTS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
+```
+to 
+```
+export REQUESTS_CA_BUNDLE=/etc/ssl/certs/ZscalerRootCA.pem
+```
+But that didn't work, so Yifei suggested I generate a strace using `strace -f -s 1024 -ttT -o strace.log`. When he reviewed the log, he highlighted the following
+```
+6863  14:03:38.183003 openat(AT_FDCWD, "/etc/ssl/certs/ca-certificates.crt", O_RDONLY) = 6 <0.000076>
+6863  14:03:27.583332 stat("/home/progressedd/miniconda3/lib/python3.9/site-packages/certifi/cacert.pem", {st_mode=S_IFREG|0664, st_size=285222, ...}) = 0 <0.000032>
+```
+Which indicated that zscaler was not in the ca-certificates.crt nor cacert.pem. To debug this, I checked if the zcaler certificate was inside of my ca-certs file using the following command 
+`cat /etc/ssl/certs/ca-certificates.crt`
+When I checked the for the zcaler certificate, it wasn't in ca-certificates.crt. So I tried the open ssl command from stack overflow [Convert .pem to .crt and .key](https://stackoverflow.com/a/60315721)
+```
+ sudo openssl crl2pkcs7 -nocrl -certfile /usr/local/share/ca-certificates/ZscalerRootCA.pem |
+openssl pkcs7 -print_certs -out /usr/local/share/ca-certificates/ZScalerRootCA.crt
+```
+But the conversion failed and gave me a corrupted value. To get around this, Eric, another sigpwny club member suggested I copy the Zcaler pem and change the file type to .crt since the PEM had the following structure
+```
+-----BEGIN CERTIFICATE-----
+asdjfalsjdflajksdlfkjasdf
+-----END CERTIFICATE-----
+```
+I did it with the following command within `/usr/local/share/ca-certificates/`
+```
+sudo cp ZscalerRootCA.pem ZscalerRootCA.crt
+```
+Then I ran 
+```
+sudo update-ca-certificates --fresh
+```
+which gave me the critical output
+```
+Replacing debian:ZscalerRootCA.pem
+```
+Indicating that Zcaler's certificate was added to my ca-certificates.
