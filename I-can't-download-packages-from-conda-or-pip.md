@@ -309,7 +309,7 @@ CApath: /etc/ssl/certs
 ```
 Success! Changing the filename to match the fish config solved the requests error.
 
-# How Yifei helped me fix my requests error
+# How Yifei and Sigpwny helped me fix my requests error
 ## background
 At somepoint, I was trying to use requests for another project, but the kept getting certificate issues
 ```
