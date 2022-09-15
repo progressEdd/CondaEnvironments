@@ -4,7 +4,7 @@ Hello future me, at some point you will make yourself setup wsl because you want
 
 WSL does some funky stuff in the background and does apparently does not mirror your own network settings from Windows. You'd think a developer focused company would have figured this out earlier, but alas they haven't. 
 
-# steps
+# WSL steps
 
 ## getting your dns servers setup
 
@@ -91,28 +91,28 @@ sudo apt-get update
 
 ## getting your certificates setup. In my case it was zscaler, which I downloaded from the IT
 
-1. navigate to the directory with all the certificates
+### 1. navigate to the directory with all the certificates
 
-2. copy the certificates to ` /usr/local/share/ca-certificates`
+### 2. copy the certificates to ` /usr/local/share/ca-certificates`
    
    ```
    sudo cp zscaler.cer /usr/local/share/ca-certificates
    sudo cp ZscalerRootCertificate.pem /usr/local/share/ca-certificates
    ```
 
-3. copy the certificates to `/etc/ssl/certs `
+### 3. copy the certificates to `/etc/ssl/certs `
    
    ```
    sudo cp ZscalerRootCA.pem /etc/ssl/certs
    ```
 
-4. update your certificates
+### 4. update your certificates
 
    ```
    sudo update-ca-certificates
    ```
 
-4. add it to your path/environment variables. Make sure the certificate filename matches the ones below
+### 5. add it to your path/environment variables. Make sure the certificate filename matches the ones below
    
    ```
    export CURL_CA_BUNDLE=/usr/local/share/ca-certificates/ZscalerRootCA.pem
@@ -120,13 +120,13 @@ sudo apt-get update
    export REQUESTS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt # ca-bundle.crt
    ```
 
-5. restart fish
+### 6. restart fish
    
    ```
    sudo nano ~/.config/fish/config.fish
    ```
 
-6. check if the internet works, I was trying to install miniconda
+### 7. check if the internet works, I was trying to install miniconda
    
    ```
    wget -v https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
@@ -382,3 +382,57 @@ which gave me the critical output
 Replacing debian:ZscalerRootCA.pem
 ```
 Indicating that Zcaler's certificate was added to my ca-certificates.
+
+
+# Getting setup for anaconda windows
+## background
+if for whatever reason you run into a issues where your company does not support wsl and or are unable to help with getting the certificates setup for windows, follow these steps. Some how the combination of these steps seemed to get it working, but I don't fully understand what I did to make it work.
+## setup your path
+### 1. search for environment variables
+alternatively, you can also find it within the about pc section under `Advanced System Setttings`. You will need admin access or elevated rights
+### 2. Select Environment Variables within the System Properties
+### 3. find and select the `Path` variable within the user and system
+### 4. click `Edit`
+### 5. Within the `Edit environment Variable window` click `New`
+### 6. Paste the path of your Miniconda root, Miniconda bin, and Scripts directory
+in my case it's in `C:\Users\USERNAME\Miniconda3\`. I pasted the following values as new entries. Replace `USERNAME` with the name of your local account
+```
+C:\Users\USERNAME\Miniconda3
+C:\Users\USERNAME\Miniconda3\Scripts
+C:\Users\USERNAME\Miniconda3\Library\bin
+```
+### 7. apply your changes to the path variables (hit `OK` on both)
+### 8. Repeat the options again for the system as well
+### 9. Restart your PC to make sure the variables refresh
+
+## setup anaconda powershell prompt
+### 1. get the certificate adapted from [Installing Zscaler Certificate to Anaconda3](https://stackoverflow.com/a/63306093)
+ 
+ 1. Open a browser and go to www.google.com
+ 2. Next to the reload page button, you will see a lock (see picture below). click on it
+ 3. Click on : Certificat
+ 4. Click on the tab: Certification Path
+ 5. Select Zsclaer Root CA5 and the click on View Certificat button
+ 6. Click on the tab: Details and then click on Copy to file button
+ 7. Export the certificat choosing the base-64 encoded X.509 (.CER)
+ 8. Choose a path where to save the file
+
+### 2. copy the certificate to your local account name directory `C:\Users\USERNAME\`
+### 3. Temporarily edit pip.ini, adapted from [Zscaler is not allowing PIP to download and install packages](https://community.zscaler.com/t/zscaler-is-not-allowing-pip-to-download-and-install-packages/7789/4)
+ 1. navigate to the pip.ini file `C:\ProgramData\pip`
+ 2. edit pip.ini 
+ 3. Add the following lines
+ ```
+ [global]
+trusted-host = pypi.python.org
+               pypi.org
+               files.pythonhosted.org
+ ```
+ 4. save your changes
+### 4. start up your anaconda powershell prompt
+### 5. install pip_system_certs package using `pip install pip_system_certs`
+### 6. install certifi using `pip install certifi | pip install --upgrade certifi`
+### 7. add zscaler to your certificates using the following commands
+ 1. `cat ZscalerRootCA.pem >> $(python -m certifi)`
+ 2. `pip config set global.cert $(python -m certifi)`
+### 8. check if conda has access to the internet by running `conda update conda`
